@@ -14,4 +14,8 @@ public class SearchResult {
     public String getFullUrl() {
         return fullUrl;
     }
+
+    public String getRelevantParagraph(){ return relevantParagraph; }
+
+    public int getRelevanceScore() { return relevanceScore; }
 }

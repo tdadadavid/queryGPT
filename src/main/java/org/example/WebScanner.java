@@ -49,27 +49,17 @@ public class WebScanner {
             JSONObject jsonObject = new JSONObject(jsonResponse);
             JSONArray itemsArray = jsonObject.getJSONArray("items");
 
+            System.out.println("google results: " + itemsArray.length());
             for (int i = 0; i < itemsArray.length(); i++) {
                 JSONObject item = itemsArray.getJSONObject(i);
                 String link = item.getString("link");
                 SearchResult result = processUrl(link, query, 0);
-                if (result != null) {
-                    results.add(result);
-                }
+                System.out.println("full url: " + result.getFullUrl());
+                System.out.println("Current (i): " + i);
+                results.add(result);
 
             }
 
-//            Document doc = Jsoup.connect(url).ignoreContentType(true).get();
-//            System.out.println(doc);
-//            Elements items = doc.select("items");
-//
-//            for (Element item : items) {
-//                String link = item.select("link").text();
-//                SearchResult result = processUrl(link, query);
-//                if (result != null) {
-//                    results.add(result);
-//                }
-//            }
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -98,7 +88,7 @@ public class WebScanner {
                 .setDefaultRequestConfig(config)
                 .build();
 
-        int bestScore = 10;
+        int bestScore = 1;
         String bestParagraph = "";
         HttpGet linkRequest = new HttpGet(link);
 
@@ -113,8 +103,6 @@ public class WebScanner {
                 if (score > bestScore) {
                     bestScore = score;
                     bestParagraph = paragraph;
-
-                    System.out.println(paragraph);
 
                     return new SearchResult(bestParagraph, link, bestScore);
                 }
@@ -175,6 +163,8 @@ public class WebScanner {
                 score += entry.getValue() * textFreqMap.get(word);
             }
         }
+
+        System.out.println("score: " + score);
 
         return score;
     }

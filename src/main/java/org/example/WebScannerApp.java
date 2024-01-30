@@ -1,10 +1,9 @@
 package org.example;
 
-import javafx.application.Platform;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -50,6 +49,7 @@ public class WebScannerApp {
             appendText();
             return;
         }
+        textArea.setText("");
 
         CompletableFuture.supplyAsync(() -> {
             WebScanner webScanner = new WebScanner();
@@ -61,7 +61,10 @@ public class WebScannerApp {
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }
-        }).thenAcceptAsync(this::displayResults, Platform::runLater);
+        }).thenAccept(searchResults -> {
+            System.out.println(Arrays.toString(searchResults.toArray()));
+            displayResults(searchResults);
+        });
 
     }
 
@@ -70,6 +73,9 @@ public class WebScannerApp {
         for (int i = 0; i < results.size(); i++) {
             SearchResult result = results.get(i);
             textArea.append((i + 1) + ". " + result.getFullUrl() + "\n");
+            textArea.append(result.getRelevantParagraph());
+            textArea.append("This paragraph has " + result.getRelevanceScore() + " score.");
+            textArea.append("");
         }
     }
 
