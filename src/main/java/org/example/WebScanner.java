@@ -84,7 +84,7 @@ public class WebScanner {
                 .setCookieSpec(CookieSpecs.STANDARD)
                 .build();
 
-        CloseableHttpClient client =HttpClients.custom()
+        CloseableHttpClient client = HttpClients.custom()
                 .setDefaultRequestConfig(config)
                 .build();
 
@@ -102,8 +102,7 @@ public class WebScanner {
                 int score = calculateBagOfWordsScore(query, paragraph);
                 if (score > bestScore) {
                     bestScore = score;
-                    bestParagraph = paragraph;
-
+                    bestParagraph = stripHTMLContents(paragraph);
                     return new SearchResult(bestParagraph, link, bestScore);
                 }
             }
@@ -112,6 +111,10 @@ public class WebScanner {
         }
 
         return null;
+    }
+
+    private String stripHTMLContents(String paragraph) {
+        return Jsoup.parse(paragraph).text();
     }
 
     private String findRelevantParagraph(String url, String query) {
